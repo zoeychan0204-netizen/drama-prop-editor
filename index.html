@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>短剧道具｜虚构支付详情页编辑器</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f0f0f0;color:#191919;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+  .toolbar{position:sticky;top:0;z-index:5;background:#222;color:#fff;padding:12px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .toolbar strong{margin-right:auto;font-size:15px}
+  button{border:0;border-radius:8px;padding:9px 12px;background:#fff;color:#222;font-size:14px;cursor:pointer}
+  button.primary{background:#f0c400}
+  .layout{display:grid;grid-template-columns:minmax(260px,340px) minmax(320px,430px);gap:20px;justify-content:center;padding:20px}
+  .panel{background:white;border-radius:12px;padding:16px;height:max-content}
+  .panel h2{font-size:17px;margin:0 0 14px}
+  label{display:block;font-size:13px;color:#555;margin:12px 0 5px}
+  input{width:100%;padding:10px;border:1px solid #ccc;border-radius:7px;font-size:15px}
+  .hint{font-size:12px;line-height:1.6;color:#666;margin-top:12px}
+  .phone{background:#fff;width:100%;max-width:430px;min-height:920px;margin:auto;position:relative;overflow:hidden;box-shadow:0 3px 18px #0001}
+  .status{height:62px;padding:20px 28px 0;display:flex;justify-content:space-between;font-size:16px}
+  .nav{height:72px;display:flex;align-items:center;justify-content:center;position:relative;font-size:21px;font-weight:600}
+  .x{position:absolute;left:25px;font-size:32px;font-weight:300;top:12px}
+  .hero{text-align:center;padding:10px 20px 0}
+  .coin{width:66px;height:66px;border-radius:50%;background:#edc300;color:white;display:flex;align-items:center;justify-content:center;font-size:35px;margin:4px auto 24px}
+  .recipient{font-size:22px;line-height:1.45;min-height:34px;overflow-wrap:anywhere}
+  .amount{font-size:48px;font-weight:600;margin:28px 0 76px;letter-spacing:.2px}
+  .rule{height:1px;background:#e5e5e5;margin:0 30px 22px}
+  .details{padding:0 30px 30px}
+  .item{display:grid;grid-template-columns:118px 1fr;gap:10px;margin:18px 0;font-size:17px;line-height:1.55}
+  .key{color:#888}
+  .value{overflow-wrap:anywhere}
+  .service{border-top:10px solid #f3f3f3;padding:24px 30px 18px;font-size:19px}
+  .service-links{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #e5e5e5;margin-top:20px;padding-top:22px;color:#627797;font-size:14px}
+  .footer{margin-top:4px;background:#f8f8f8;color:#aaa;text-align:center;padding:24px 12px 18px;font-size:13px;line-height:1.8}
+  .propmark{font-size:13px!important;color:#777!important;letter-spacing:.5px}
+  @media(max-width:760px){.layout{grid-template-columns:1fr;padding:12px}.panel{order:0}.preview{order:1}.phone{min-height:850px}.toolbar strong{width:100%}}
+  @media print{body{background:white}.toolbar,.panel{display:none!important}.layout{display:block;padding:0}.phone{box-shadow:none;max-width:none;width:100%;min-height:100vh}.propmark{display:block!important}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <strong>短剧道具编辑器（虚构界面）</strong>
+  <button class="primary" onclick="window.print()">打印 / 保存为 PDF</button>
+  <button onclick="resetFields()">恢复示例</button>
+</div>
+<div class="layout">
+  <section class="panel">
+    <h2>编辑内容</h2>
+    <label for="recipientIn">付款对象</label><input id="recipientIn" value="扫二维码付款-给刘文卿" oninput="sync('recipient',this.value)">
+    <label for="amountIn">金额</label><input id="amountIn" value="-2300.00" oninput="sync('amount',this.value)">
+    <label for="dateIn">转账日期</label><input id="dateIn" value="2026年10月07日" oninput="sync('date',this.value)">
+    <label for="timeIn">转账时间</label><input id="timeIn" value="20:31:56" oninput="sync('time',this.value)">
+    <label for="numberIn">虚构转账单号</label><input id="numberIn" value="PROP20261007000123456789" oninput="sync('number',this.value)">
+    <label for="balanceIn">零钱余额</label><input id="balanceIn" value="9345.57" oninput="sync('balance',this.value)">
+    <label for="noteIn">底部道具标识</label><input id="noteIn" value="非真实交易，仅作道具" oninput="sync('note',this.value)">
+    <p class="hint">所有字段都可直接修改，右侧会同步预览。底部“非真实交易，仅作道具”标识会保留。点击“打印 / 保存为 PDF”，在打印窗口中选择“另存为 PDF”即可导出。</p>
+  </section>
+  <section class="preview">
+    <div class="phone">
+      <div class="status"><span>17:03</span><span>▂ ▄ ▆　Wi‑Fi　62%</span></div>
+      <div class="nav"><span class="x">×</span>零钱明细</div>
+      <div class="hero">
+        <div class="coin">✓</div>
+        <div class="recipient" id="recipient">扫二维码付款-给刘文卿</div>
+        <div class="amount" id="amount">-2300.00</div>
+      </div>
+      <div class="rule"></div>
+      <div class="details">
+        <div class="item"><div class="key">当前状态</div><div class="value">支付成功</div></div>
+        <div class="item"><div class="key">收款方备注</div><div class="value">二维码收款</div></div>
+        <div class="item"><div class="key">支付方式</div><div class="value">零钱</div></div>
+        <div class="item"><div class="key">转账时间</div><div class="value"><span id="date">2026年10月07日</span><br><span id="time">20:31:56</span></div></div>
+        <div class="item"><div class="key">转账单号</div><div class="value" id="number">PROP20261007000123456789</div></div>
+        <div class="item"><div class="key">零钱余额</div><div class="value" id="balance">9345.57</div></div>
+      </div>
+      <div class="service">账单服务</div>
+      <div class="footer">
+        本页面为虚构影视道具，不代表真实支付记录<br>
+        <strong class="propmark" id="note">非真实交易，仅作道具</strong>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+function sync(id,value){document.getElementById(id).textContent=value}
+function resetFields(){
+ const values={recipientIn:'扫二维码付款-给刘文卿',amountIn:'-2300.00',dateIn:'2026年10月07日',timeIn:'20:31:56',numberIn:'PROP20261007000123456789',balanceIn:'9345.57',noteIn:'非真实交易，仅作道具'};
+ Object.entries(values).forEach(([id,v])=>{document.getElementById(id).value=v;sync(id.replace('In',''),v)});
+}
+</script>
+</body>
+</html>
